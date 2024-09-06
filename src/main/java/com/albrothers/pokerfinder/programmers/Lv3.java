@@ -4,8 +4,11 @@ import java.util.*;
 
 public class Lv3 {
 	public static void main(String[] args) {
-		Solution1 solution1 = new Solution1();
-		System.out.println(solution1);
+		등굣길DP solution1 = new 등굣길DP();
+		int m = 4;
+		int n = 3;
+		int[][] puddles = {{2, 2}};
+		System.out.println(solution1.solution(m, n, puddles));
 	}
 
 	private static class 네트워크_재도전해보기 {
@@ -137,4 +140,180 @@ public class Lv3 {
 		}
 	}
 
+	private static class 이중우선순위큐 {
+		public int[] solution(String[] operations) {
+			int[] answer = {};
+			Deque<Integer> que = new ArrayDeque<>();
+			for (String operation: operations) {
+				String[] split = operation.split(" ");
+				if (split[0].equals("I")) {
+					que.add(Integer.parseInt(split[1]));
+				} else {
+					if (que.isEmpty()) {
+						continue;
+					}
+					if (split[1].equals("1")) {
+						que.remove(que.stream().max(Integer::compareTo).get());
+					} else {
+						que.remove(que.stream().min(Integer::compareTo).get());
+					}
+				}
+			}
+
+			if (que.isEmpty()) {
+				answer = new int[] {0, 0};
+			} else {
+				answer = new int[] {que.stream().max(Integer::compareTo).get(), que.stream().min(Integer::compareTo).get()};
+			}
+
+			return answer;
+		}
+	}
+
+	private static class 정수삼각형 {
+		public int solution(int[][] triangle) {
+			int answer = 0;
+
+			for (int i = 1; i < triangle.length ; i++) {
+				for (int j = 0; j < triangle[i].length; j++) {
+					if (j == 0) {
+						triangle[i][j] += triangle[i-1][j];
+					} else if (j == triangle[i].length - 1) {
+						triangle[i][j] += triangle[i-1][j-1];
+					} else {
+						triangle[i][j] += Math.max(triangle[i-1][j-1], triangle[i-1][j]);
+					}
+				}
+			}
+
+			answer = Arrays.stream(triangle[triangle.length - 1]).max().orElseGet(() -> 0);
+
+			return answer;
+		}
+
+	}
+
+	private static class 등굣길_dfs_시간초과 {
+		static final int[] dx = {1, 0};
+		static final int[] dy = {0, 1};
+
+		static int answer = 0;
+
+		static Set<String> puddleSet = new HashSet<>();
+		public int solution(int m, int n, int[][] puddles) {
+			for (int[] puddle : puddles) {
+				puddleSet.add(String.format("%d, %d", puddle[0], puddle[1]));
+			}
+			dfs(1, 1, m, n);
+
+			return answer;
+		}
+
+		private static void dfs(int curX, int curY, int m, int n) {
+			String current = String.format("%d, %d", curX, curY);
+			if (puddleSet.contains(current)) {
+				return;
+			}
+
+			System.out.println(String.format("curX: %d, curY: %d", curX, curY));
+			if (curX == m && curY == n) {
+				System.out.println(String.format("answer: %d", answer));
+				answer = (answer + 1) % 1_000_000_007;
+				return;
+			}
+
+			for (int i = 0; i < 2; i++) {
+				int nextX = curX + dx[i];
+				int nextY = curY + dy[i];
+				if (nextX > m || nextY > n) continue;
+				dfs(nextX, nextY, m, n);
+			}
+		}
+	}
+
+	private static class 등굣길DP {
+		public int solution(int m, int n, int[][] puddles) {
+			// 이건 사실상 계단 문제랑 비슷한 거임. 어떤 지점에 가는 경우의 수 = 위에서 오는 경로 + 왼쪽에서 오는 경로임.
+			// 어떤 지점에 가는 경우의 수를 담은 DP 테이블을 만들어야 함.
+			// DP 테이블을 만들 때, 물웅덩이가 있는 곳은 0으로 초기화해야 함.
+			int[][] dp = new int[m+1][n+1];
+			dp[1][1] = 1;
+
+			for (int[] puddle : puddles) {
+				dp[puddle[0]][puddle[1]] = -1;
+			}
+
+			for (int i = 1; i <= m; i++) {
+				for (int j = 1; j <= n; j++) {
+					if (dp[i][j] == -1) {
+						dp[i][j] = 0; // 웅덩이인 경우 0. 못 가니까.
+						continue;
+					}
+
+					if (i > 1) {
+						dp[i][j] = (dp[i][j] + dp[i-1][j]) % 1_000_000_007;
+					}
+
+					if (j > 1) {
+						dp[i][j] = (dp[i][j] + dp[i][j-1]) % 1_000_000_007;
+					}
+				}
+			}
+
+			return dp[m][n];
+		}
+	}
+
+	private static class 숫자게임 {
+		public int solution(int[] A, int[] B) {
+			int answer = 0;
+			Arrays.sort(A);
+			Arrays.sort(B);
+
+			int i = 0;
+			int j = 0;
+
+			while (i < A.length && j < B.length) {
+				if (A[i] < B[j]) {
+					answer++;
+					i++;
+					j++;
+				} else {
+					j++;
+				}
+			}
+
+			return answer;
+		}
+
+	}
+
+	private static class 숫자게임_스택 {
+		public int solution(int[] A, int[] B) {
+			int answer = 0;
+
+			Arrays.sort(A);
+			Arrays.sort(B);
+
+			Deque<Integer> dequeA = new ArrayDeque<>();
+			Deque<Integer> dequeB = new ArrayDeque<>();
+
+			for (int i = 0; i < A.length; i++) {
+				dequeA.offerLast(A[i]);
+				dequeB.offerLast(B[i]);
+			}
+
+			while (!dequeA.isEmpty() && !dequeB.isEmpty()) {
+				if (dequeA.peekFirst() < dequeB.peekFirst()) {
+					dequeA.pollFirst();
+					dequeB.pollFirst();
+					answer++;
+				} else {
+					dequeB.pollFirst();
+				}
+			}
+
+			return answer;
+		}
+	}
 }
