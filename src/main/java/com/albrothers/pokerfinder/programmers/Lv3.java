@@ -288,7 +288,7 @@ public class Lv3 {
 
 	}
 
-	private static class 숫자게임_스택 {
+	private static class 숫자게임_큐 {
 		public int solution(int[] A, int[] B) {
 			int answer = 0;
 
@@ -314,6 +314,74 @@ public class Lv3 {
 			}
 
 			return answer;
+		}
+	}
+
+	private static class 단속카메라_그리디 {
+		public int solution(int[][] routes) {
+			int answer = 0;
+			// 차량 진출 지점 기준으로 오름차순 정렬
+			Arrays.sort(routes, Comparator.comparingInt(e -> e[1]));
+
+			int camera = Integer.MIN_VALUE;
+			// 제일 먼저 진출하는 차량부터 진출하는 지점에 카메라 설치
+			// 그 다음 차량을 확인해서 카메라 위치보다 진입 지점이 나중에 있다면 추가 설치.
+			for (int i = 0; i < routes.length; i++) {
+				if (camera < routes[i][0]) {
+					camera = routes[i][1];
+					answer++;
+				}
+			}
+			return answer;
+		}
+	}
+
+	private static class 섬연결하기_그리디_최소신장트리_Kruskal {
+		public int solution(int n, int[][] costs) {
+			int answer = 0;
+
+			// 그래프를 만들어서 최소 비용으로 연결되는 다리를 찾아야 함.
+			// n-1개의 다리면 다 연결이 되지만 순환이 없어야 함. => Kruskal 알고리즘을 사용해야 함.
+			// 참고: https://youtu.be/jSZT_INJKK8
+			// 모든 노드가 최소 한 개의 다리는 가지고 있어야 함.
+			// 그리디 알고리즘을 사용하면 됨.
+			// 최소 비용으로 연결되는 다리를 찾기 위해 비용을 기준으로 오름차순 정렬.
+			Arrays.sort(costs, Comparator.comparingInt(e -> e[2]));
+
+			// Union-Find 알고리즘을 사용해야 함.
+			// 처음에는 모든 노드가 자기 자신을 가리키도록 함.
+			int[] parent = new int[n];
+
+			for (int i = 0; i < n; i++) {
+				parent[i] = i;
+			}
+
+			for (int i = 0; i < costs.length ; i++) {
+				if (findParent(costs[i][0], parent) != findParent(costs[i][1], parent)) {
+					unionParent(costs[i][0], costs[i][1], parent);
+					answer += costs[i][2];
+				}
+			}
+
+			return answer;
+		}
+
+		private int findParent(int node, int[] parent) {
+			if (parent[node] != node) {
+				parent[node] = findParent(parent[node], parent);
+			}
+			return parent[node];
+		}
+
+		private void unionParent(int a, int b, int[] parent) {
+			int rootA = findParent(a, parent);
+			int rootB = findParent(b, parent);
+
+			if (rootA < rootB) {
+				parent[rootB] = rootA;
+			} else {
+				parent[rootA] = rootB;
+			}
 		}
 	}
 }
