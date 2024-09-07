@@ -673,4 +673,66 @@ public class Lv1 {
 			return answer;
 		}
 	}
+
+	private static class 같은숫자는싫어 {
+				public int[] solution(int[] arr) {
+
+					Deque<Integer> deque = new ArrayDeque<>();
+
+					for (int i : arr) {
+						if (deque.isEmpty() || deque.peekLast() != i) {
+							deque.addLast(i);
+						}
+					}
+
+					// deque를 int[]로 변환
+					int[] answer = new int[deque.size()];
+					for (int i = 0; i < answer.length; i++) {
+						answer[i] = deque.pollFirst(); // deque가 절대 비어있을리는 없음.
+					}
+
+					return answer;
+				}
+	}
+
+	private static class 체육복 {
+		public int solution(int n, int[] lost, int[] reserve) {
+			List<Integer> lostList = new ArrayList<>();
+			List<Integer> reserveList = new ArrayList<>();
+			for (int i : lost) {
+				lostList.add(i);
+			}
+			for (int i : reserve) {
+				reserveList.add(i);
+			}
+
+			// 오름차순 정렬이 되어있다고 써있지 않았음. 예제가 정렬되어 있을 뿐.
+			lostList.sort(Comparator.naturalOrder());
+			reserveList.sort(Comparator.naturalOrder());
+
+			for (int i = 0; i < lostList.size(); i++) {
+				for (int j = 0; j < reserveList.size(); j++) {
+					if (Objects.equals(lostList.get(i), reserveList.get(j))) {
+						lostList.remove(i);
+						reserveList.remove(j);
+						i--;
+						break;
+					}
+				}
+			}
+
+			for (int i = 0; i < lostList.size(); i++) {
+				for (int j = 0; j < reserveList.size(); j++) {
+					if (Math.abs(lostList.get(i) - reserveList.get(j)) == 1) {
+						lostList.remove(i);
+						reserveList.remove(j);
+						i--;
+						break;
+					}
+				}
+			}
+
+			return n - lostList.size();
+		}
+	}
 }
