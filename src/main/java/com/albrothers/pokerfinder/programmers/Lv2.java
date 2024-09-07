@@ -362,4 +362,143 @@ public class Lv2 {
 		}
 	}
 
+	public static class 큰수만들기 {
+		public String solution(String number, int k) {
+			// 숫자의 순서가 바뀌지 않는 상태에서 k개의 숫자를 제거하는 문제였다.
+			Deque<Integer> deque = new ArrayDeque<>();
+			for (int i = 0; i < number.length(); i++) {
+				int current = number.charAt(i) - '0';
+
+				while (!deque.isEmpty() && k > 0 && deque.peekLast() < current) {
+					deque.pollLast();
+					k--;
+				}
+
+				deque.offerLast(current);
+			}
+
+			// 위 과정을 다 했는데 아직 k를 소진하지 못한 케이스 처리
+			while (k > 0) {
+				deque.pollLast();
+				k--;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			while (!deque.isEmpty()) {
+				sb.append(deque.pollFirst());
+			}
+
+			return sb.toString();
+		}
+	}
+
+	private static class 징검다리건너기_효율성실패 {
+			public int solution(int[] stones, int k) {
+				int answer = 0;
+
+				while (Boolean.FALSE.equals(IsConsecutiveZeros(stones, k))) {
+					for (int i = 0; i < stones.length; i++) {
+						if (stones[i] > 0) {
+							stones[i]--;
+						}
+					}
+					answer++;
+				}
+
+				return answer;
+			}
+
+			private boolean IsConsecutiveZeros(int[] arr, int k) {
+				int zeroCount = 0;
+
+				for (int num : arr) {
+					if (num == 0) {
+						zeroCount++;
+						if (zeroCount == k) {
+							return true;
+						}
+					} else {
+						zeroCount = 0;
+					}
+				}
+
+				return false;
+			}
+	}
+
+	private static class 징검다리건너기_이분탐색 {
+		public int solution(int[] stones, int k) {
+			int left = 1;
+			int right = Arrays.stream(stones).max().getAsInt();
+			int answer = 0;
+
+			while (left <= right) {
+				int mid = (left + right) / 2;
+
+				if (canCross(stones, k, mid)) {
+					answer = mid;
+					left = mid + 1;
+				} else {
+					right = mid - 1;
+				}
+			}
+
+			return answer;
+		}
+
+		private boolean canCross(int[] stones, int k, int mid) {
+			int zeroCount = 0;
+
+			for (int stone : stones) {
+				if (stone - mid < 0) {
+					zeroCount++;
+					if (zeroCount >= k) {
+						// 연속된 0이 k개 이상이면 못 건넌다.
+						return false;
+					}
+				} else {
+					zeroCount = 0;
+				}
+			}
+
+			return true;
+		}
+	}
+
+
+	private static class 입국심사_이분탐색 {
+		public long solution(int n, int[] times) {
+			long answer = 0;
+			long left = 1;
+			long right = (long) n * Arrays.stream(times).max().getAsInt(); // 여기 형변환 안하면 오답 나옴.
+
+			while (left <= right) {
+				long mid = (left + right) / 2;
+
+				if (canProcessAll(n, times, mid)) {
+					answer = mid;
+					right = mid - 1;
+				} else {
+					left = mid + 1;
+				}
+			}
+
+			return answer;
+		}
+
+		private boolean canProcessAll(int people, int[] times, long mid) {
+			long totalPeople = 0;
+
+			for (int time : times) {
+				totalPeople += mid / time; // 시도해보려는 최소 시간 동안 각 심사관이 최대 몇 명을 처리할 수 있는지 더함.
+				if (totalPeople >= people) {
+					return true;
+				}
+			}
+
+			return totalPeople >= people;
+		}
+	}
+
+
 }
