@@ -384,11 +384,4 @@ public class Lv3 {
 			}
 		}
 	}
-
-	private static class 합승택시요금 {
-		public int solution(int n, int s, int a, int b, int[][] fares) {
-			int answer = 0;
-			return answer;
-		}
-	}
 }
