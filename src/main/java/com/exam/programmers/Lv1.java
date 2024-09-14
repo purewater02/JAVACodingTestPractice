@@ -1,4 +1,4 @@
-package com.albrothers.pokerfinder.programmers;
+package com.exam.programmers;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

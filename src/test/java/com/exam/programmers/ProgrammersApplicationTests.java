@@ -1,4 +1,4 @@
-package com.albrothers.pokerfinder.programmers;
+package com.exam.programmers;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
