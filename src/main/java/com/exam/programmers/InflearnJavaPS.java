@@ -6,19 +6,15 @@ import java.util.stream.Collectors;
 
 public class InflearnJavaPS {
 	public static void main(String[] args) {
-		// 실행시간 체크
-		long start = System.currentTimeMillis();
 		Scanner in=new Scanner(System.in);
 		int input1 = in.nextInt();
 		int input2 = in.nextInt();
-		int[] intList = new int[input1];
+		int[] intArray = new int[input1];
 		for (int i = 0; i < input1; i++) {
-			intList[i] = in.nextInt();
+			intArray[i] = in.nextInt();
 		}
-		매출액의종류 sol = new 매출액의종류();
-		sol.solution(input1, input2, intList);
-		long end = System.currentTimeMillis();
-		System.out.println( "실행 시간 : " + ( end - start ));
+		응급실 sol = new 응급실();
+		sol.solution(input1, input2, intArray);
 	}
 
 	private static class 문자찾기 {
@@ -199,4 +195,60 @@ public class InflearnJavaPS {
 			}
 		}
 	}
+
+	private static class 올바른괄호 {
+		private void solution(String str) {
+			Deque<Character> stack = new ArrayDeque<>();
+			for (char c : str.toCharArray()) {
+				if (stack.isEmpty()) {
+					stack.addLast(c);
+					continue;
+				}
+				if (c == '(') {
+					stack.addLast(c);
+				} else if (c == ')' && stack.peekLast().equals('(')) {
+					stack.pollLast();
+				}
+			}
+			if (stack.isEmpty()) {
+				System.out.println("YES");
+			} else {
+				System.out.println("NO");
+			}
+		}
+	}
+
+	private static class 응급실 {
+		private static class Person {
+			int id;
+			int priority;
+
+			public Person(int id, int priority) {
+				this.id = id;
+				this.priority = priority;
+			}
+		}
+
+		private void solution(int n, int m, int[] arr) {
+			Deque<Person> queue = new ArrayDeque<>();
+			for (int i = 0; i < n; i++) {
+				queue.addLast(new Person(i, arr[i]));
+			}
+			int answer = 0;
+			while (!queue.isEmpty()) {
+				Person current = queue.pollFirst();
+				if (queue.stream().anyMatch(person -> person.priority > current.priority)) {
+					queue.addLast(current);
+				} else {
+					answer++;
+					if (current.id == m) {
+						break;
+					}
+				}
+			}
+			System.out.println(answer);
+		}
+	}
+
+
 }
