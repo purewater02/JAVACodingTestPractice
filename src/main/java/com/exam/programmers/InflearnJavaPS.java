@@ -250,5 +250,34 @@ public class InflearnJavaPS {
 		}
 	}
 
+	private static class LeastRecentlyUsed {
+		private void solution(int n, int m, int[] arr) {
+			Deque<Integer> deque = new ArrayDeque<>();
+			for (int i : arr) {
+				if (deque.contains(i)) {
+					deque.remove(i);
+				} else if (deque.size() == n) {
+					deque.pollLast();
+				}
+				deque.addFirst(i);
+			}
+			deque.forEach(i -> System.out.print(i + " "));
+		}
+	}
 
+	private static class 장난꾸러기 {
+		private void solution(int n, int[] arr) {
+			int[] sorted = arr.clone();
+			Arrays.sort(sorted);
+			int start = 0;
+			int end = n - 1;
+			while (start < n && arr[start] == sorted[start]) {
+				start++;
+			}
+			while (end >= 0 && arr[end] == sorted[end]) {
+				end--;
+			}
+			System.out.println((start + 1) + " " + (end + 1));
+		}
+	}
 }
