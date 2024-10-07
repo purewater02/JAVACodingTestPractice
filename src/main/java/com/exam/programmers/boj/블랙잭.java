@@ -1,4 +1,4 @@
-package com.exam.programmers.bj;
+package com.exam.programmers.boj;
 
 import java.util.ArrayList;
 import java.util.List;
